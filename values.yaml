@@ -1,0 +1,55 @@
+# Values for deployment-custom
+nameOverride: ""
+fullnameOverride: ""
+
+# --- Storage / PVC (JuiceFS) ---
+pvName: "pv-example"
+pvcName: "pvc-example"
+serviceName: "service-example"
+namespace: "juicefs"
+deploymentId: "12345"
+username: "testuser"
+storageSize: "5Gi"
+storageClass: "juicefs-sc"
+volumeHandle: "jfs-volume"
+# Secret cho CSI nodePublishSecretRef: phải tồn tại trong cluster (thường do JuiceFS CSI driver / admin tạo).
+# Trên cluster của bạn secret đang nằm ở default/juicefs-csi-secret.
+secretName: "juicefs-csi-secret"
+secretNamespace: "default"
+
+# --- Workload / InferenceService (default: YOLO server) ---
+appLabel: "yolo-server"
+
+# Docker image to run your model server.
+# For Ultralytics YOLO:
+#   https://hub.docker.com/r/ultralytics/ultralytics
+image: "ultralytics/ultralytics:latest"
+
+# Container command & args.
+# Mặc định: `yolo serve model=$(YOLO_MODEL_PATH) host=0.0.0.0 port=8000`
+command:
+  - "yolo"
+arguments:
+  - "serve"
+  - "model=$(YOLO_MODEL_PATH)"
+  - "host=0.0.0.0"
+  - "port=8000"
+
+# Port mà container lắng nghe (phải trùng với port trong args ở trên).
+containerPort: 8000
+
+# Đường mount của PVC trong container.
+mountPath: "/models"
+
+# --- Environment variables for container ---
+# Có thể override / thêm env khi install:
+#   helm install ... --set envs.MY_KEY=my_value
+envs:
+  YOLO_MODEL_PATH: "/models/yolo11n.pt"
+
+# --- Resources ---
+cpuRequest: "200m"
+cpuLimit: "1000m"
+memoryRequest: "1Gi" # in Gi
+memoryLimit: "2Gi"   # in Gi
+gpuLimit: 0

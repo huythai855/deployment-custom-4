@@ -1,0 +1,53 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: {{ .Values.serviceName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appLabel }}
+    deployment_id: {{ .Values.deploymentId | quote }}
+spec:
+  predictor:
+    volumes:
+      - name: jfs-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.pvcName }}
+    containers:
+      - name: server
+        image: {{ .Values.image }}
+        {{- if .Values.command }}
+        command:
+        {{- range .Values.command }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.arguments }}
+        args:
+        {{- range .Values.arguments }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- end }}
+        ports:
+          - containerPort: {{ .Values.containerPort }}
+            name: http1
+        volumeMounts:
+          - name: jfs-data
+            mountPath: {{ .Values.mountPath }}
+            readOnly: false
+        {{- if .Values.envs }}
+        env:
+        {{- range $key, $value := .Values.envs }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            cpu: {{ .Values.cpuRequest | quote }}
+            memory: {{ .Values.memoryRequest }}
+          limits:
+            cpu: {{ .Values.cpuLimit | quote }}
+            memory: {{ .Values.memoryLimit }}
+            {{- if and .Values.gpuLimit (gt (int .Values.gpuLimit) 0) }}
+            nvidia.com/gpu: {{ .Values.gpuLimit | quote }}
+            {{- end }}
