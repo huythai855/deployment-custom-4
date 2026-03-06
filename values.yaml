@@ -23,7 +23,7 @@ appLabel: "yolo-server"
 # Docker image to run your model server.
 # For Ultralytics YOLO:
 #   https://hub.docker.com/r/ultralytics/ultralytics
-image: "ultralytics/ultralytics:latest"
+image: ""
 
 # Container command & args.
 # Mặc định: `yolo serve model=$(YOLO_MODEL_PATH) host=0.0.0.0 port=8000`
