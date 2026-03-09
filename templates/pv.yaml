@@ -16,7 +16,7 @@ spec:
     driver: csi.juicefs.com
     volumeHandle: {{ .Values.volumeHandle }}
     volumeAttributes:
-      subdir: /{{ .Values.username }}
+      subdir: /
     nodePublishSecretRef:
       name: {{ .Values.secretName }}
       namespace: {{ .Values.secretNamespace | default .Values.namespace }}
