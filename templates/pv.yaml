@@ -19,4 +19,4 @@ spec:
       subdir: /
     nodePublishSecretRef:
       name: {{ .Values.secretName }}
-      namespace: {{ .Values.secretNamespace | default .Values.namespace }}
+      namespace: juicefs
