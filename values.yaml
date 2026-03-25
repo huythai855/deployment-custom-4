@@ -6,16 +6,16 @@ fullnameOverride: ""
 pvName: "pv-example"
 pvcName: "pvc-example"
 serviceName: "service-example"
-namespace: "juicefs-2"
+namespace: "custom-yolo2"
 deploymentId: "12345"
 username: "testuser"
 storageSize: "5Gi"
 storageClass: "juicefs-sc"
-volumeHandle: "jfs-volume"
+volumeHandle: "my-jfs-volume"
 # Secret cho CSI nodePublishSecretRef: phải tồn tại trong cluster (thường do JuiceFS CSI driver / admin tạo).
 # Trên cluster của bạn secret đang nằm ở default/juicefs-csi-secret.
-secretName: "juicefs-csi-secret"
-secretNamespace: "default"
+secretName: "juicefs-sc-secret"
+secretNamespace: "juicefs"
 
 # --- Workload / InferenceService (default: YOLO server) ---
 appLabel: "yolo-server"
@@ -23,17 +23,17 @@ appLabel: "yolo-server"
 # Docker image to run your model server.
 # For Ultralytics YOLO:
 #   https://hub.docker.com/r/ultralytics/ultralytics
-image: ""
+image: "huythai855/yolo-api-onnx:latest"
 
 # Container command & args.
 # Mặc định: `yolo serve model=$(YOLO_MODEL_PATH) host=0.0.0.0 port=8000`
-command:
-  - "yolo"
-arguments:
-  - "serve"
-  - "model=$(YOLO_MODEL_PATH)"
-  - "host=0.0.0.0"
-  - "port=8000"
+# command:
+#   - "yolo"
+# arguments:
+#   - "serve"
+#   - "model=$(YOLO_MODEL_PATH)"
+#   - "host=0.0.0.0"
+#   - "port=8000"c
 
 # Port mà container lắng nghe (phải trùng với port trong args ở trên).
 containerPort: 8000
@@ -45,7 +45,8 @@ mountPath: "/models"
 # Có thể override / thêm env khi install:
 #   helm install ... --set envs.MY_KEY=my_value
 envs:
-  YOLO_MODEL_PATH: "/models/yolo11n.pt"
+  YOLO_MODEL_PATH: "/models/mlflow/7/models/m-3ad00c4dba2344d9af071528b8a0d39d/artifacts/artifacts/yolo11n.onnx"
+  MODEL_PATH: "/models/mlflow/7/models/m-3ad00c4dba2344d9af071528b8a0d39d/artifacts/artifacts/yolo11n.onnx"
 
 # --- Resources ---
 cpuRequest: "200m"
